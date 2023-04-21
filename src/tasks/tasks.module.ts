@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { TasksController } from './tasks.controller';
+import { TodoController } from './tasks.controller';
+import { TodoService } from './tasks.service';
 
 @Module({
-  controllers: [TasksController]
+  controllers: [TodoController],
+  providers: [TodoService]
 })
-export class TasksModule {}
+export class TodosModule { }
