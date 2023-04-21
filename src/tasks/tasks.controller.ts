@@ -46,19 +46,7 @@ export class TodoController {
     addTodo(
         @Body() newTodo: AddTodoDto
     ) {
-        const todo = new Todo();
-        const { name, description } = newTodo;
-        todo.name = name;
-        todo.description = description;
 
-
-        if (this.todos.length) {
-            todo.id = this.todos[this.todos.length - 1].id + 1;
-        } else {
-            todo.id = 1;
-        }
-        this.todos.push(todo);
-        return todo;
     }
 
     @Delete(':id')
