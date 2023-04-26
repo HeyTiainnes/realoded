@@ -1,10 +1,13 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Req, Res, UseInterceptors } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Todo } from './entities/task.entity';
 import { GetPaginatedDto } from './dto/getPaginated-todo.dto';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { TodoService } from './tasks.service';
+import { UpperAndFusionPipe } from 'src/pipes/upper-and-fusion/upper-and-fusion.pipe';
+import { DurationInterceptor } from 'src/interceptor/duration/duration.interceptor';
 
+@UseInterceptors(DurationInterceptor)
 @Controller('todo')
 export class TodoController {
     constructor(
@@ -26,57 +29,54 @@ export class TodoController {
 
     @Get()
     getTodos(
+
         @Query() mesQueryParams: GetPaginatedDto
-    ) {
+    ): Todo[] {
         console.log(mesQueryParams);
         return this.todoService.getTodos();
     }
     //
     @Get('/:id')
     getTodoById(
-        @Param('id') id
+        @Param('id', ParseIntPipe) id
     ) {
         const todo = this.todos.find((actualTodo) => actualTodo.id === +id);
         if (todo)
-            return todo;
+            return this.todoService.getTodoById(id);
         throw new NotFoundException(`Le todo d'id ${id} n'existe pas`);
     }
 
     @Post()
     addTodo(
         @Body() newTodo: AddTodoDto
-    ) {
-
+    ): Todo {
+        return this.todoService.addTodos(newTodo);
     }
 
-    @Delete(':id')
+    @Delete(':id',)
     deleteTodo(
-        @Param('id') id
+        @Param('id', ParseIntPipe) id
     ) {
-        const index = this.todos.findIndex((todo: Todo) => todo.id === +id);
 
-        if (index >= 0) {
 
-            this.todos.splice(index, 1);
+        return this.todoService.deleteTodo(+id);
 
-        } else {
-
-            throw new NotFoundException('not exist')
-        }
-        //console.log('Supprimer un todo de la liste des todos');
-        return {
-            message: `La task d'id ${id} supprimé :) `
-        };
     }
     @Put(':id')
     modifierTodo(
-        @Param('id') id,
+        @Param('id', ParseIntPipe) id,
         @Body() newTodo: Partial<AddTodoDto>
     ) {
-        ;
-        const todo = this.getTodoById(id);
-        todo.description = newTodo.description ? newTodo.description : todo.description;
-        todo.name = newTodo.name ? newTodo.name : todo.name;
-        return todo;
+
+        return this.todoService.updateTodo(id, newTodo);
     }
+
+    @Post('testPipe')
+
+    testPipe(@Body(UpperAndFusionPipe) data) {
+
+        return data;
+
+    }
+
 }
