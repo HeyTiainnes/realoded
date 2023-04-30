@@ -1,10 +1,27 @@
-import { IsString } from "class-validator";
+import { IsBoolean, IsDate, IsNumber, IsString } from "class-validator";
 
 export class AddTodoDto {
     @IsString()
     name: string;
 
     @IsString()
-    description: string;
+    designation: string;
 
+    @IsNumber()
+    importance: number;
+
+    @IsDate()
+    dead_line: Date;
+
+    @IsDate()
+    duree_prevue: Date;
+
+    @IsDate()
+    date_debut_prevue: Date;
+
+    @IsBoolean()
+    etat: boolean;
+
+    @IsString()
+    notes: string;
 }

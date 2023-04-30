@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Req, Res, UseInterceptors } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Todo } from './entities/task.entity';
+import { TasksEntity } from './entities/task.entity';
 import { GetPaginatedDto } from './dto/getPaginated-todo.dto';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { TodoService } from './tasks.service';
@@ -14,7 +14,7 @@ export class TodoController {
         private todoService: TodoService
 
     ) { }
-    todos: Todo[];
+    todos: TasksEntity[];
     @Get('v2')
     getTodosV2(
         @Req() request: Request,
@@ -28,13 +28,14 @@ export class TodoController {
     }
 
     @Get()
-    getTodos(
-
+    async getTodos(
         @Query() mesQueryParams: GetPaginatedDto
-    ): Todo[] {
+    ): Promise<TasksEntity[]> {
         console.log(mesQueryParams);
-        return this.todoService.getTodos();
+        const tasks = await this.todoService.getTasks();
+        return tasks;
     }
+
     //
     @Get('/:id')
     getTodoById(
@@ -49,7 +50,7 @@ export class TodoController {
     @Post()
     addTodo(
         @Body() newTodo: AddTodoDto
-    ): Todo {
+    ): TasksEntity {
         return this.todoService.addTodos(newTodo);
     }
 
@@ -62,15 +63,28 @@ export class TodoController {
         return this.todoService.deleteTodo(+id);
 
     }
+    // @Put(':id')
+    // modifierTodo(
+    //     @Param('id', ParseIntPipe) id,
+    //     @Body() newTodo: Partial<AddTodoDto>
+    // ) {
+
+    //     return this.todoService.updateTodo(id, newTodo);
+    // }
     @Put(':id')
-    modifierTodo(
+    async modifierTodo(
         @Param('id', ParseIntPipe) id,
         @Body() newTodo: Partial<AddTodoDto>
-    ) {
+    ): Promise<void> {
+        const todoToUpdate: Partial<TasksEntity> = {
+            // copier les propriétés de AddTodoDto à TasksEntity
+            designation: newTodo.designation,
+            // initialisez les autres champs comme vous le jugez nécessaire
+            // ...
+        };
 
-        return this.todoService.updateTodo(id, newTodo);
+        await this.todoService.updateTodo(id, todoToUpdate);
     }
-
     @Post('testPipe')
 
     testPipe(@Body(UpperAndFusionPipe) data) {

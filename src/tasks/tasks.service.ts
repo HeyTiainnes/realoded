@@ -1,17 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Todo } from './entities/task.entity';
+import { TasksEntity } from './entities/task.entity';
 import { AddTodoDto } from './dto/add-todo.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TodoService {
-    todos: Todo[] = [];
+    todos: TasksEntity[] = [];
 
-    getTodos(): Todo[] {
-        return this.todos;
+    constructor(
+        @InjectRepository(TasksEntity)
+        private TaskRepository: Repository<TasksEntity>
+    ) {
+
     }
-    addTodos(newTodo: AddTodoDto): Todo {
+
+    async getTasks(): Promise<TasksEntity[]> {
+        return await this.TaskRepository.find();
+    }
+    addTodos(newTodo: AddTodoDto): TasksEntity {
         //const todo = new Todo();
-        const { name, description } = newTodo;
+        const { designation } = newTodo;
         // todo.name = name;
         // todo.description = description;
 
@@ -23,8 +32,8 @@ export class TodoService {
         }
         const todo = {
             id,
-            name,
-            description,
+            // name,
+            designation,
             createdAt: new Date()
         };
         this.todos.push(todo);
@@ -45,14 +54,14 @@ export class TodoService {
     //     // this.todos.push(todo);
     //     // return todo;
     // }
-    getTodoById(id: number): Todo {
+    getTodoById(id: number): TasksEntity {
         const todo = this.todos.find((actualTodo) => actualTodo.id === id);
         if (todo)
             return todo;
         throw new NotFoundException(`Le todo d'id ${id} n'existe pas`);
     }
     deleteTodo(id: number) {
-        const index = this.todos.findIndex((todo: Todo) => todo.id === +id);
+        const index = this.todos.findIndex((todo: TasksEntity) => todo.id === +id);
 
         if (index >= 0) {
 
@@ -66,10 +75,10 @@ export class TodoService {
             count: 1
         };
     }
-    updateTodo(id: number, newTodo: Partial<Todo>) {
+    updateTodo(id: number, newTodo: Partial<TasksEntity>) {
         const todo = this.getTodoById(id);
-        todo.description = newTodo.description ? newTodo.description : todo.description;
-        todo.name = newTodo.name ? newTodo.name : todo.name;
+        todo.designation = newTodo.designation ? newTodo.designation : todo.designation;
+        //todo.name = newTodo.name ? newTodo.name : todo.name;
         return todo;
     }
 }
