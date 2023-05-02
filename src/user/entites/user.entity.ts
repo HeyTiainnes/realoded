@@ -13,7 +13,7 @@ export class UsersEntity {
         type: 'varchar',
         length: 50,
     })
-    name: string;
+    username: string;
 
     @Column({
         unique: true,
@@ -33,6 +33,7 @@ export class UsersEntity {
     salt: string;
 
     @Column({
+        nullable: true,
         type: 'enum',
         enum: UserRoleEnum,
         default: UserRoleEnum.USER
