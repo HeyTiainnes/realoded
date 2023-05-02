@@ -12,7 +12,6 @@ import { DurationInterceptor } from 'src/interceptor/duration/duration.intercept
 export class TodoController {
     constructor(
         private todoService: TodoService
-
     ) { }
     todos: TasksEntity[];
     @Get('v2')
@@ -26,7 +25,6 @@ export class TodoController {
             contenu: `Je suis une réponse générée à partir de l'objet Response de express`
         })
     }
-
     @Get()
     async getTodos(
         @Query() mesQueryParams: GetPaginatedDto
@@ -35,8 +33,6 @@ export class TodoController {
         const tasks = await this.todoService.getTasks();
         return tasks;
     }
-
-    //
     @Get('/:id')
     getTodoById(
         @Param('id', ParseIntPipe) id
@@ -46,31 +42,19 @@ export class TodoController {
             return this.todoService.getTodoById(id);
         throw new NotFoundException(`Le todo d'id ${id} n'existe pas`);
     }
-
     @Post()
-    addTodo(
-        @Body() newTodo: AddTodoDto
-    ): TasksEntity {
-        return this.todoService.addTodos(newTodo);
+    async addTodo(
+        @Body() newTodo: AddTodoDto,
+        @Body('utilisateurId', ParseIntPipe) utilisateurId: number
+    ): Promise<TasksEntity> {
+        return await this.todoService.addTodos(newTodo, utilisateurId);
     }
-
     @Delete(':id',)
     deleteTodo(
         @Param('id', ParseIntPipe) id
     ) {
-
-
         return this.todoService.deleteTodo(+id);
-
     }
-    // @Put(':id')
-    // modifierTodo(
-    //     @Param('id', ParseIntPipe) id,
-    //     @Body() newTodo: Partial<AddTodoDto>
-    // ) {
-
-    //     return this.todoService.updateTodo(id, newTodo);
-    // }
     @Put(':id')
     async modifierTodo(
         @Param('id', ParseIntPipe) id,
@@ -82,15 +66,10 @@ export class TodoController {
             // initialisez les autres champs comme vous le jugez nécessaire
             // ...
         };
-
         await this.todoService.updateTodo(id, todoToUpdate);
     }
     @Post('testPipe')
-
     testPipe(@Body(UpperAndFusionPipe) data) {
-
         return data;
-
     }
-
 }

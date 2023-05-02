@@ -3,14 +3,19 @@ import { TasksEntity } from './entities/task.entity';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UsersEntity } from 'src/user/entites/user.entity';
 
 @Injectable()
 export class TodoService {
     todos: TasksEntity[] = [];
+    //userRepository: UsersEntity;
 
     constructor(
         @InjectRepository(TasksEntity)
-        private TaskRepository: Repository<TasksEntity>
+        private TaskRepository: Repository<TasksEntity>,
+        @InjectRepository(UsersEntity)
+        private userRepository: Repository<UsersEntity>
+
     ) {
 
     }
@@ -18,42 +23,22 @@ export class TodoService {
     async getTasks(): Promise<TasksEntity[]> {
         return await this.TaskRepository.find();
     }
-    addTodos(newTodo: AddTodoDto): TasksEntity {
-        //const todo = new Todo();
+    async addTodos(newTodo: AddTodoDto, utilisateurId: number): Promise<TasksEntity> {
         const { designation } = newTodo;
-        // todo.name = name;
-        // todo.description = description;
 
-        let id;
-        if (this.todos.length) {
-            id = this.todos[this.todos.length - 1].id + 1;
-        } else {
-            id = 1;
+        let utilisateur = await this.userRepository.findOne({ where: { id: utilisateurId } });
+
+        if (!utilisateur) {
+            throw new NotFoundException(`User with id ${utilisateurId} does not exist.`);
         }
-        const todo = {
-            id,
-            // name,
-            designation,
-            createdAt: new Date()
-        };
-        this.todos.push(todo);
-        return todo;
+
+        let todo = new TasksEntity();
+        todo.designation = designation;
+        todo.user = utilisateur;
+
+        return this.TaskRepository.save(todo);
     }
 
-
-
-    //     return {
-    //         id,
-    //         name,
-    //         description,
-    //         createdAtt: new Date()
-
-    //     }
-
-
-    //     // this.todos.push(todo);
-    //     // return todo;
-    // }
     getTodoById(id: number): TasksEntity {
         const todo = this.todos.find((actualTodo) => actualTodo.id === id);
         if (todo)

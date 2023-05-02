@@ -11,10 +11,11 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const corsOptions = {
-    origin: ['http://localhost:4200']
-  }
-  app.enableCors(corsOptions)
+  app.enableCors({
+    origin: '*', // Autoriser toutes les origines
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Autoriser toutes les méthodes
+    // allowedHeaders: 'Content-Type, Accept, Authorization', // Autoriser certains en-têtes spécifiques
+  });
   app.use(morgan('dev'));
   app.use(
     (req: Request, res: Response, next) => {
@@ -27,6 +28,6 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
   app.useGlobalInterceptors(new DurationInterceptor());
-  await app.listen(process.env.APP_PORT);
+  await app.listen(process.env.APP_PORT || 3000);
 }
 bootstrap();
