@@ -15,7 +15,7 @@ export class UserService {
         private jwtService: JwtService
     ) { }
     async register(userData: UserSubscribeDto): Promise<Partial<UsersEntity>> {
-        const { name, password, email } = userData;
+        const { username, password, email } = userData;
         const user = this.userRepository.create({
             ...userData
         });
