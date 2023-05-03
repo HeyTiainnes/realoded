@@ -1,17 +1,20 @@
-import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
+// import { ArgumentMetadata, Injectable, PipeTransform, BadRequestException } from '@nestjs/common';
+
+import { Injectable, PipeTransform, ArgumentMetadata, BadRequestException } from "@nestjs/common";
 
 @Injectable()
-export class UpperAndFusionPipe implements PipeTransform {
-  transform(entry: { data: string[] }, metadata: ArgumentMetadata) {
-
-    if (metadata.type === 'body') {
-
-      return entry.data.map((element) => element.toUpperCase()).join('-');
-
+export class DateConversionPipe implements PipeTransform {
+  transform(value: string, metadata: ArgumentMetadata): any {
+    if (metadata.type !== 'body') {
+      return value;
     }
-    console.log('metadata :', metadata);
-    console.log('value :', entry);
 
-    return entry.data;
+    const date = new Date(value);
+
+    if (isNaN(date.getTime())) {
+      throw new BadRequestException('Validation failed (date string is expected)');
+    }
+
+    return date;
   }
 }

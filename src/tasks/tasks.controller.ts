@@ -4,7 +4,7 @@ import { TasksEntity } from './entities/task.entity';
 import { GetPaginatedDto } from './dto/getPaginated-todo.dto';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { TodoService } from './tasks.service';
-import { UpperAndFusionPipe } from 'src/pipes/upper-and-fusion/upper-and-fusion.pipe';
+//import { UpperAndFusionPipe } from 'src/pipes/upper-and-fusion/upper-and-fusion.pipe';
 import { DurationInterceptor } from 'src/interceptor/duration/duration.interceptor';
 
 @UseInterceptors(DurationInterceptor)
@@ -68,8 +68,8 @@ export class TodoController {
         };
         await this.todoService.updateTodo(id, todoToUpdate);
     }
-    @Post('testPipe')
-    testPipe(@Body(UpperAndFusionPipe) data) {
-        return data;
-    }
+    // @Post('testPipe')
+    // testPipe(@Body(UpperAndFusionPipe) data) {
+    //     return data;
+    // }
 }
