@@ -17,39 +17,14 @@ export class TodoService {
         private userRepository: Repository<UsersEntity>
 
     ) {
-
     }
-
     async getTasks(): Promise<TasksEntity[]> {
         return await this.TaskRepository.find();
     }
-    // async addTodos(newTodo: AddTodoDto, utilisateurId: number): Promise<TasksEntity> {
-    //     const { designation } = newTodo;
-
-    //     let utilisateur = await this.userRepository.findOne({ where: { id: utilisateurId } });
-
-    //     if (!utilisateur) {
-    //         throw new NotFoundException(`User with id ${utilisateurId} does not exist.`);
-    //     }
-
-    //     let todo = new TasksEntity();
-    //     todo.designation = designation;
-    //     todo.user = utilisateur;
-
-    //     return this.TaskRepository.save(todo);
-    // }
-    async addTodos(newTodo: AddTodoDto, utilisateurId: number): Promise<TasksEntity> {
-        const utilisateur = await this.userRepository.findOne({ where: { id: utilisateurId } });
-
-        if (!utilisateur) {
-            throw new NotFoundException(`User with id ${utilisateurId} does not exist.`);
-        }
-
-        const todoData = { ...newTodo, user: utilisateur };
-        let todo = new TasksEntity();
-        Object.assign(todo, todoData);
-
-        return this.TaskRepository.save(todo);
+    async addTodos(newTodo: AddTodoDto, user: UsersEntity): Promise<TasksEntity> {
+        const newTask = this.TaskRepository.create(newTodo);
+        newTask.user = user;
+        return this.TaskRepository.save(newTask);
     }
 
     getTodoById(id: number): TasksEntity {
@@ -67,7 +42,6 @@ export class TodoService {
         } else {
             throw new NotFoundException('not exist')
         }
-        //console.log('Supprimer un todo de la liste des todos');
         return {
             message: `La task d'id ${id} supprimé :) `,
             count: 1
@@ -75,8 +49,7 @@ export class TodoService {
     }
     updateTodo(id: number, newTodo: Partial<TasksEntity>) {
         const todo = this.getTodoById(id);
-        todo.designation = newTodo.designation ? newTodo.designation : todo.designation;
-        //todo.name = newTodo.name ? newTodo.name : todo.name;
+        todo.designation = newTodo.designation ? newTodo.designation : todo.designation
         return todo;
     }
 }

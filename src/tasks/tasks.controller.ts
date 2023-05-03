@@ -7,6 +7,7 @@ import { TodoService } from './tasks.service';
 //import { UpperAndFusionPipe } from 'src/pipes/upper-and-fusion/upper-and-fusion.pipe';
 import { DurationInterceptor } from 'src/interceptor/duration/duration.interceptor';
 import { JwtAuthGuard } from 'src/user/Guards/jwt-auth.guard';
+import { UsersEntity } from 'src/user/entites/user.entity';
 
 @UseInterceptors(DurationInterceptor)
 @Controller('todo')
@@ -36,6 +37,7 @@ export class TodoController {
         return tasks;
     }
     @Get('/:id')
+    @UseGuards(JwtAuthGuard)
     getTodoById(
         @Param('id', ParseIntPipe) id
     ) {
@@ -45,19 +47,26 @@ export class TodoController {
         throw new NotFoundException(`Le todo d'id ${id} n'existe pas`);
     }
     @Post()
+    @UseGuards(JwtAuthGuard)
     async addTodo(
         @Body() newTodo: AddTodoDto,
-        @Body('utilisateurId', ParseIntPipe) utilisateurId: number
+        @Req() request: Request,
+        // @User()
+        // @Body('utilisateurId', ParseIntPipe) utilisateurId: number
     ): Promise<TasksEntity> {
-        return await this.todoService.addTodos(newTodo, utilisateurId);
+        console.log('user de la request :', request.user);
+        const user = request.user as UsersEntity;
+        return await this.todoService.addTodos(newTodo, user);
     }
     @Delete(':id',)
+    @UseGuards(JwtAuthGuard)
     deleteTodo(
         @Param('id', ParseIntPipe) id
     ) {
         return this.todoService.deleteTodo(+id);
     }
     @Put(':id')
+    @UseGuards(JwtAuthGuard)
     async modifierTodo(
         @Param('id', ParseIntPipe) id,
         @Body() newTodo: Partial<AddTodoDto>
@@ -67,5 +76,4 @@ export class TodoController {
         };
         await this.todoService.updateTodo(id, todoToUpdate);
     }
-
 }
