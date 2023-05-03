@@ -9,7 +9,7 @@ export class AddTodoDto {
     designation: string;
 
     @IsString()
-    importance: string;
+    importance: number;
 
     @IsDate()
     @Type(() => Date)
@@ -23,8 +23,8 @@ export class AddTodoDto {
     @Type(() => Date)
     date_debut_prevue: Date;
 
-    @IsBoolean()
-    etat: boolean;
+    @IsString()
+    etat: string;
 
     @IsString()
     notes: string;

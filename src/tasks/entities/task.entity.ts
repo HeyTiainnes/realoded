@@ -14,7 +14,7 @@ export class TasksEntity {
     designation?: string;
 
     @Column({ nullable: true })
-    importance?: string;
+    importance?: number;
 
     @Column({ nullable: true })
     dead_line?: Date;
@@ -26,7 +26,7 @@ export class TasksEntity {
     date_debut_prevue?: Date;
 
     @Column({ nullable: true })
-    etat?: boolean;
+    etat?: string;
 
     @Column({ nullable: true })
     notes?: string;

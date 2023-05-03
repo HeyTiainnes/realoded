@@ -27,7 +27,7 @@ export class TodoController {
         })
     }
     @Get()
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     async getTodos(
         @Query() mesQueryParams: GetPaginatedDto
     ): Promise<TasksEntity[]> {
