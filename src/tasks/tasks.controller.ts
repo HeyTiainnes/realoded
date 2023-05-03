@@ -4,7 +4,6 @@ import { TasksEntity } from './entities/task.entity';
 import { GetPaginatedDto } from './dto/getPaginated-todo.dto';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { TodoService } from './tasks.service';
-//import { UpperAndFusionPipe } from 'src/pipes/upper-and-fusion/upper-and-fusion.pipe';
 import { DurationInterceptor } from 'src/interceptor/duration/duration.interceptor';
 import { JwtAuthGuard } from 'src/user/Guards/jwt-auth.guard';
 import { UsersEntity } from 'src/user/entites/user.entity';
@@ -16,17 +15,7 @@ export class TodoController {
         private todoService: TodoService
     ) { }
     todos: TasksEntity[];
-    @Get('v2')
-    getTodosV2(
-        @Req() request: Request,
-        @Res() response: Response
-    ) {
-        console.log('Récupérer la liste des todos');
-        response.status(205);
-        response.json({
-            contenu: `Je suis une réponse générée à partir de l'objet Response de express`
-        })
-    }
+
     @Get()
     @UseGuards(JwtAuthGuard)
     async getTodos(
@@ -51,8 +40,7 @@ export class TodoController {
     async addTodo(
         @Body() newTodo: AddTodoDto,
         @Req() request: Request,
-        // @User()
-        // @Body('utilisateurId', ParseIntPipe) utilisateurId: number
+
     ): Promise<TasksEntity> {
         console.log('user de la request :', request.user);
         const user = request.user as UsersEntity;
