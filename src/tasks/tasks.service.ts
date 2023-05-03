@@ -4,38 +4,21 @@ import { AddTodoDto } from './dto/add-todo.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersEntity } from 'src/user/entites/user.entity';
-
+import { user } from 'src/decorators/user.decorator'
 @Injectable()
 export class TodoService {
     todos: TasksEntity[] = [];
-    //userRepository: UsersEntity;
-
     constructor(
         @InjectRepository(TasksEntity)
         private TaskRepository: Repository<TasksEntity>,
         @InjectRepository(UsersEntity)
         private userRepository: Repository<UsersEntity>
-
     ) {
     }
-    async getTasks(): Promise<TasksEntity[]> {
-        return await this.TaskRepository.find();
+    async getTasks(user): Promise<TasksEntity[]> {
+        return await this.TaskRepository.find({ where: { user } });
     }
-    // async addTodos(newTodo: AddTodoDto, utilisateurId: number): Promise<TasksEntity> {
-    //     const { designation } = newTodo;
 
-    //     let utilisateur = await this.userRepository.findOne({ where: { id: utilisateurId } });
-
-    //     if (!utilisateur) {
-    //         throw new NotFoundException(`User with id ${utilisateurId} does not exist.`);
-    //     }
-
-    //     let todo = new TasksEntity();
-    //     todo.designation = designation;
-    //     todo.user = utilisateur;
-
-    //     return this.TaskRepository.save(todo);
-    // }
     async addTodos(newTodo: AddTodoDto, utilisateurId: number): Promise<TasksEntity> {
         const utilisateur = await this.userRepository.findOne({ where: { id: utilisateurId } });
 

@@ -4,6 +4,7 @@ import { TasksEntity } from './entities/task.entity';
 import { GetPaginatedDto } from './dto/getPaginated-todo.dto';
 import { AddTodoDto } from './dto/add-todo.dto';
 import { TodoService } from './tasks.service';
+import { user } from 'src/decorators/user.decorator';
 import { DurationInterceptor } from 'src/interceptor/duration/duration.interceptor';
 import { JwtAuthGuard } from 'src/user/Guards/jwt-auth.guard';
 import { UsersEntity } from 'src/user/entites/user.entity';
@@ -15,18 +16,28 @@ export class TodoController {
         private todoService: TodoService
     ) { }
     todos: TasksEntity[];
-
+    @Get('v2')
+    getTodosV2(
+        @Req() request: Request,
+        @Res() response: Response
+    ) {
+        console.log('Récupérer la liste des todos');
+        response.status(205);
+        response.json({
+            contenu: `Je suis une réponse générée à partir de l'objet Response de express`
+        })
+    }
     @Get()
     @UseGuards(JwtAuthGuard)
     async getTodos(
+        @user() user: UsersEntity,
         @Query() mesQueryParams: GetPaginatedDto
     ): Promise<TasksEntity[]> {
         console.log(mesQueryParams);
-        const tasks = await this.todoService.getTasks();
+        const tasks = await this.todoService.getTasks(user);
         return tasks;
     }
     @Get('/:id')
-    @UseGuards(JwtAuthGuard)
     getTodoById(
         @Param('id', ParseIntPipe) id
     ) {
@@ -36,25 +47,19 @@ export class TodoController {
         throw new NotFoundException(`Le todo d'id ${id} n'existe pas`);
     }
     @Post()
-    @UseGuards(JwtAuthGuard)
     async addTodo(
         @Body() newTodo: AddTodoDto,
-        @Req() request: Request,
-
+        @Body('utilisateurId', ParseIntPipe) utilisateurId: number
     ): Promise<TasksEntity> {
-        console.log('user de la request :', request.user);
-        const user = request.user as UsersEntity;
-        return await this.todoService.addTodos(newTodo, user);
+        return await this.todoService.addTodos(newTodo, utilisateurId);
     }
     @Delete(':id',)
-    @UseGuards(JwtAuthGuard)
     deleteTodo(
         @Param('id', ParseIntPipe) id
     ) {
         return this.todoService.deleteTodo(+id);
     }
     @Put(':id')
-    @UseGuards(JwtAuthGuard)
     async modifierTodo(
         @Param('id', ParseIntPipe) id,
         @Body() newTodo: Partial<AddTodoDto>
@@ -64,4 +69,9 @@ export class TodoController {
         };
         await this.todoService.updateTodo(id, todoToUpdate);
     }
+
 }
+// function User(): (target: TodoController, propertyKey: "getTodos", parameterIndex: 0) => void {
+//     throw new Error('Function not implemented.');
+//}
+
