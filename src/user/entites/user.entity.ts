@@ -50,21 +50,8 @@ export class UsersEntity {
         }
     )
     Tasks: TasksEntity[];
-    // @OneToMany(() => TasksEntity, task => task.user)
-    // tasks: TasksEntity[];
-    // userame: any;
-
-
-    //tasks:TasksEntity[]
 }
 
-    // @Column({ type: 'enum', enum: RoleEnumType, default: RoleEnumType.USER })
-    // role: RoleEnumType;
 
-    // // @OneToOne(type => TasksEntity, (task) => task.user, { eager: true })
-    // // tasks: TasksEntity[];
-    // @OneToMany(() => TasksEntity, (task) => task.user, { onDelete: 'CASCADE' })
-    //      tasks: TasksEntity[];
-    // tasks: TasksEntity[];
 
 

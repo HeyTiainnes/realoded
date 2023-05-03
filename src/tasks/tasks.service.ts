@@ -23,18 +23,31 @@ export class TodoService {
     async getTasks(): Promise<TasksEntity[]> {
         return await this.TaskRepository.find();
     }
-    async addTodos(newTodo: AddTodoDto, utilisateurId: number): Promise<TasksEntity> {
-        const { designation } = newTodo;
+    // async addTodos(newTodo: AddTodoDto, utilisateurId: number): Promise<TasksEntity> {
+    //     const { designation } = newTodo;
 
-        let utilisateur = await this.userRepository.findOne({ where: { id: utilisateurId } });
+    //     let utilisateur = await this.userRepository.findOne({ where: { id: utilisateurId } });
+
+    //     if (!utilisateur) {
+    //         throw new NotFoundException(`User with id ${utilisateurId} does not exist.`);
+    //     }
+
+    //     let todo = new TasksEntity();
+    //     todo.designation = designation;
+    //     todo.user = utilisateur;
+
+    //     return this.TaskRepository.save(todo);
+    // }
+    async addTodos(newTodo: AddTodoDto, utilisateurId: number): Promise<TasksEntity> {
+        const utilisateur = await this.userRepository.findOne({ where: { id: utilisateurId } });
 
         if (!utilisateur) {
             throw new NotFoundException(`User with id ${utilisateurId} does not exist.`);
         }
 
+        const todoData = { ...newTodo, user: utilisateur };
         let todo = new TasksEntity();
-        todo.designation = designation;
-        todo.user = utilisateur;
+        Object.assign(todo, todoData);
 
         return this.TaskRepository.save(todo);
     }

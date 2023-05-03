@@ -3,15 +3,13 @@ import { Type } from 'class-transformer';
 import { IsString, IsNumber, IsDate, IsBoolean } from 'class-validator';
 
 export class AddTodoDto {
-    @IsString()
-    // nullable: true;
-    name: string;
+
 
     @IsString()
     designation: string;
 
-    @IsNumber()
-    importance: number;
+    @IsString()
+    importance: string;
 
     @IsDate()
     @Type(() => Date)
@@ -30,4 +28,5 @@ export class AddTodoDto {
 
     @IsString()
     notes: string;
+
 }

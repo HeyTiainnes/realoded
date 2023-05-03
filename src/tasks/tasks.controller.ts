@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Req, Res, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { TasksEntity } from './entities/task.entity';
 import { GetPaginatedDto } from './dto/getPaginated-todo.dto';
@@ -6,6 +6,7 @@ import { AddTodoDto } from './dto/add-todo.dto';
 import { TodoService } from './tasks.service';
 //import { UpperAndFusionPipe } from 'src/pipes/upper-and-fusion/upper-and-fusion.pipe';
 import { DurationInterceptor } from 'src/interceptor/duration/duration.interceptor';
+import { JwtAuthGuard } from 'src/user/Guards/jwt-auth.guard';
 
 @UseInterceptors(DurationInterceptor)
 @Controller('todo')
@@ -26,6 +27,7 @@ export class TodoController {
         })
     }
     @Get()
+    // @UseGuards(JwtAuthGuard)
     async getTodos(
         @Query() mesQueryParams: GetPaginatedDto
     ): Promise<TasksEntity[]> {
@@ -61,15 +63,9 @@ export class TodoController {
         @Body() newTodo: Partial<AddTodoDto>
     ): Promise<void> {
         const todoToUpdate: Partial<TasksEntity> = {
-            // copier les propriétés de AddTodoDto à TasksEntity
             designation: newTodo.designation,
-            // initialisez les autres champs comme vous le jugez nécessaire
-            // ...
         };
         await this.todoService.updateTodo(id, todoToUpdate);
     }
-    // @Post('testPipe')
-    // testPipe(@Body(UpperAndFusionPipe) data) {
-    //     return data;
-    // }
+
 }

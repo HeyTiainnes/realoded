@@ -14,7 +14,7 @@ export class TasksEntity {
     designation?: string;
 
     @Column({ nullable: true })
-    importance?: number;
+    importance?: string;
 
     @Column({ nullable: true })
     dead_line?: Date;
@@ -31,7 +31,7 @@ export class TasksEntity {
     @Column({ nullable: true })
     notes?: string;
 
-    // utilisateur: UsersEntity;
+    utilisateur: UsersEntity;
 
     @ManyToOne(type => UsersEntity, (users) => users.Tasks, { eager: false })
     user: UsersEntity;
