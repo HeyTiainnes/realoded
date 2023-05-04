@@ -9,8 +9,8 @@ export class loginCredentialsDto {
     @IsNotEmpty()
     password: string;
 
-    // @IsEmail()
-    // @IsNotEmpty()
+    @IsEmail()
+    @IsNotEmpty()
     email: string;
 
 }
